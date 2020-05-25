@@ -7,7 +7,7 @@
         <main-bar />
 
         <v-content>
-
+          <router-view class="view box grow"/>
         </v-content>
 
         <main-footer />
