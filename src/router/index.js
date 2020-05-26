@@ -5,6 +5,18 @@ import Test from '@components/test'
 import Structure from '@pages/structure'
 import NotFound from '@pages/notFound'
 
+import Departments from '@pages/departments/departments'
+import DepartmentsList from '@pages/departments/departmentsList'
+import Department from '@pages/departments/department'
+
+import Employees from '@pages/employees/employees'
+import EmployeesList from '@pages/employees/employeesList'
+import Employee from '@pages/employees/employee'
+
+import Positions from '@pages/position/positions'
+import PositionsList from '@pages/position/positionsList'
+import Position from '@pages/position/position'
+
 Vue.use(Router);
 
 const router = new Router({
@@ -14,7 +26,8 @@ const router = new Router({
             path: '/404',
             name: '404',
             component: NotFound,
-        }, {
+        },
+        {
             path: '*',
             redirect: '/404'
         },
@@ -27,51 +40,66 @@ const router = new Router({
         {
             path: '/departments',
             name: 'departments',
-            component: Test,
+            component: Departments,
             children: [
+                {
+                    path: '',
+                    name: 'departmentsList',
+                    component: DepartmentsList
+                },
                 {
                     path: ':id',
                     name: 'department',
-                    component: Test
+                    component: Department
                 },
                 {
-                    path: 'create',
-                    name: 'createDepartment',
-                    component: Test
+                    path: 'edit',
+                    name: 'editDepartment',
+                    component: Department
                 },
             ]
         },
         {
             path: '/employees',
             name: 'employees',
-            component: Test,
+            component: Employees,
             children: [
+                {
+                    path: '',
+                    name: 'employeesList',
+                    component: EmployeesList
+                },
                 {
                     path: ':id',
                     name: 'employee',
-                    component: Test
+                    component: Employee
                 },
                 {
                     path: 'create',
                     name: 'createEmployee',
-                    component: Test
+                    component: Employee
                 },
             ]
         },
         {
             path: '/positions',
             name: 'positions',
-            component: Test,
+            component: Positions,
             children: [
+                {
+                    path: '',
+                    name: 'positionsList',
+                    component: PositionsList
+                },
                 {
                     path: ':id',
                     name: 'position',
-                    component: Test
+                    component: Position
                 },
                 {
-                    path: 'create',
-                    name: 'createPosition',
-                    component: Test
+                    path: 'edit',
+                    name: 'editPosition',
+                    component: Position
                 },
             ]
         },

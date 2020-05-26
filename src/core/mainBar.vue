@@ -5,14 +5,17 @@
             dark
     >
         <v-app-bar-nav-icon @click.stop="toggleMainNav"></v-app-bar-nav-icon>
-        <v-toolbar-title>Company Name</v-toolbar-title>
+        <v-toolbar-title>{{ currentPage }}</v-toolbar-title>
     </v-app-bar>
 </template>
 <script>
-    import {mapActions} from 'vuex'
+    import {mapActions, mapState} from 'vuex'
 
     export default {
         name: 'mainBar',
+        computed: {
+            ...mapState(['currentPage'])
+        },
         methods: {
             ...mapActions(['toggleMainNav'])
         }
