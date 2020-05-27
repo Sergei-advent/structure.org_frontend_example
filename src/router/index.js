@@ -8,6 +8,7 @@ import NotFound from '@pages/notFound'
 import Departments from '@pages/departments/departments'
 import DepartmentsList from '@pages/departments/departmentsList'
 import Department from '@pages/departments/department'
+import DepartmentEdit from '@pages/departments/edit'
 
 import Employees from '@pages/employees/employees'
 import EmployeesList from '@pages/employees/employeesList'
@@ -16,6 +17,10 @@ import Employee from '@pages/employees/employee'
 import Positions from '@pages/position/positions'
 import PositionsList from '@pages/position/positionsList'
 import Position from '@pages/position/position'
+
+import FunctionalGroups from '@pages/functionalGroups/functionalGroups'
+import FunctionalGroupsList from '@pages/functionalGroups/functionalGroupsList'
+import FunctionalGroup from '@pages/functionalGroups/functionalGroup'
 
 Vue.use(Router);
 
@@ -48,15 +53,15 @@ const router = new Router({
                     component: DepartmentsList
                 },
                 {
+                    path: 'edit',
+                    name: 'editDepartment',
+                    component: DepartmentEdit
+                },
+                {
                     path: ':id',
                     name: 'department',
                     component: Department
-                },
-                {
-                    path: 'edit',
-                    name: 'editDepartment',
-                    component: Department
-                },
+                }
             ]
         },
         {
@@ -106,21 +111,26 @@ const router = new Router({
         {
             path: '/functional_groups',
             name: 'functionalGroups',
-            component: Test,
+            component: FunctionalGroups,
             children: [
+                {
+                    path: '',
+                    name: 'functionalGroupsList',
+                    component: FunctionalGroupsList
+                },
                 {
                     path: ':id',
                     name: 'functionalGroup',
+                    component: FunctionalGroup
+                },
+                {
+                    path: 'edit',
+                    name: 'editFunctionalGroup',
                     component: Test
                 },
                 {
-                    path: 'create',
-                    name: 'createFunctionalGroup',
-                    component: Test
-                },
-                {
-                    path: 'hierarchy',
-                    name: 'hierarchy',
+                    path: 'tree',
+                    name: 'tree',
                     component: Test
                 },
             ]
