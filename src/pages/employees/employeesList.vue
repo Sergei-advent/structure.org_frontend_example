@@ -7,7 +7,7 @@
                     :key="key"
                     :to="'/employees/' + employee.id"
                     link>
-                {{ employee.name }} {{ employee.position && '- ' + employee.position.name }}
+                {{ employee.name }}
             </v-list-item>
         </v-list>
     </div>

@@ -26,7 +26,8 @@
                 </template>
             </v-card-text>
             <v-card-actions>
-                <v-btn class="mx-auto" color="primary" link to="/departments/edit">Edit</v-btn>
+                <v-btn class="mx-auto" color="primary" link :to="'/departments/edit/' + department.id">Edit</v-btn>
+                <v-btn class="mx-auto" color="error" @click="removeDepartment">Delete</v-btn>
             </v-card-actions>
         </v-card>
     </div>
@@ -37,10 +38,14 @@
     export default {
         name: 'department',
         computed: {
-          ...mapState('department', ['department'])
+            ...mapState('department', ['department'])
         },
         methods: {
-          ...mapActions('department', ['getDepartment'])
+            ...mapActions('department', ['getDepartment', 'deleteDepartment']),
+            removeDepartment() {
+                this.deleteDepartment(this.$route.params.id)
+                    .then(() => this.$router.push({path: '/departments'}));
+            }
         },
         mounted() {
             this.getDepartment(this.$route.params.id);

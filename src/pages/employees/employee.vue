@@ -6,8 +6,16 @@
                 <template v-if="employee.other_information">
                     <div>Other information:</div>
                     <v-list dense>
-                        <v-list-item v-for="(item, key) in department.other_information" :key="key">
+                        <v-list-item v-for="(item, key) in employee.other_information" :key="key">
                             {{ key }} : {{ item }}
+                        </v-list-item>
+                    </v-list>
+                </template>
+                <template v-if="employee.position">
+                    <div>Departments:</div>
+                    <v-list dense>
+                        <v-list-item v-for="(item, index) in employee.position" :key="index">
+                             {{ getDepartmentName(item.department_id) + (item.position && ' - ' + item.position.name) }}
                         </v-list-item>
                     </v-list>
                 </template>
@@ -25,13 +33,19 @@
     export default {
         name: 'employee',
         computed: {
-            ...mapState('employee', ['employee'])
+            ...mapState('employee', ['employee']),
+            ...mapState('department', ['departmentList']),
         },
         methods: {
-            ...mapActions('employee', ['getEmployee'])
+            ...mapActions('employee', ['getEmployee']),
+            ...mapActions('department', ['getDepartmentsList']),
+            getDepartmentName(id) {
+                return this.departmentList.find((department) => department.id === id).name;
+            },
         },
         mounted() {
             this.getEmployee(this.$route.params.id);
+            this.getDepartmentsList();
         }
     }
 </script>

@@ -53,7 +53,12 @@ const router = new Router({
                     component: DepartmentsList
                 },
                 {
-                    path: 'edit',
+                    path: 'create',
+                    name: 'editDepartment',
+                    component: DepartmentEdit
+                },
+                {
+                    path: 'edit/:id',
                     name: 'editDepartment',
                     component: DepartmentEdit
                 },

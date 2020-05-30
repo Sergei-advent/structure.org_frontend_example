@@ -25,10 +25,12 @@ VueAxios.interceptors.request.use(function (config) {
 VueAxios.interceptors.response.use(undefined, function (error)  {
     const statusCode = error.response ? error.response.status : null;
     if (statusCode) {
-        if (statusCode === 401 && !(error.response.data && error.response.data.message === "Invalid auth token")) {
+        if (statusCode === 401) {
             window.location.href = '/login';
         } else if (statusCode === 500) {
             console.log(error.response.data);
+        } else if (statusCode === 400) {
+            alert(error.response.data.message);
         }
     }
 
