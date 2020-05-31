@@ -7,6 +7,12 @@ const state = {
     functionalGroupList: []
 };
 
+const getters = {
+    functionalGroupsListWithoutCurrent: state => id => {
+        return state.functionalGroupList.filter((functionalGroup) => functionalGroup.id !== id && functionalGroup.parent_functional_group_id !== id);
+    }
+};
+
 const actions = {
     getFunctionalGroup({commit}, id) {
         return VueAxios.get('/group/' + id)
@@ -14,10 +20,36 @@ const actions = {
                 return commit('setFunctionalGroup', response.data)
             })
     },
-    getFunctionalGroupsList({commit}) {
-        return VueAxios.get('/group')
+    getFunctionalGroupsTree({commit}) {
+        return VueAxios.get('/group/tree')
             .then((response) => {
                 return commit('setFunctionalGroupsList', response.data)
+            })
+    },
+    getFunctionalGroupsList({commit}, search) {
+        return VueAxios.get('/group', {params: {search}})
+            .then((response) => {
+                return commit('setFunctionalGroupsList', response.data)
+            })
+    },
+    deleteFunctionalGroup({commit}, id) {
+        return VueAxios.delete('/group/' + id)
+            .then(() => {
+                return commit('setFunctionalGroup', null)
+            })
+    },
+    editFunctionalGroup({commit}, functionalGroup) {
+        let request = 'post';
+        let url = 'group';
+
+        if (functionalGroup.id ) {
+            request = 'patch';
+            url = 'group/' + functionalGroup.id;
+        }
+
+        return VueAxios[request](url, functionalGroup)
+            .then((response) => {
+                return commit('setFunctionalGroup', response.data)
             })
     }
 };
@@ -34,6 +66,7 @@ const mutations = {
 export default {
     namespaced,
     state,
+    getters,
     actions,
     mutations
 }

@@ -12,7 +12,7 @@
                         </v-list-item>
                     </v-list>
                 </template>
-                <template v-if="department.employees">
+                <template v-if="department.employees && department.employees.length">
                     <div>Employees:</div>
                     <v-list dense>
                         <v-list-item
@@ -26,8 +26,8 @@
                 </template>
             </v-card-text>
             <v-card-actions>
-                <v-btn class="mx-auto" color="primary" link :to="'/departments/edit/' + department.id">Edit</v-btn>
-                <v-btn class="mx-auto" color="error" @click="removeDepartment">Delete</v-btn>
+                <v-btn class="mx-auto" v-if="permissionUpdate" color="primary" link :to="'/departments/edit/' + department.id">Edit</v-btn>
+                <v-btn class="mx-auto" v-if="permissionDelete" color="error" @click="removeDepartment">Delete</v-btn>
             </v-card-actions>
         </v-card>
     </div>
@@ -38,7 +38,18 @@
     export default {
         name: 'department',
         computed: {
-            ...mapState('department', ['department'])
+            ...mapState('department', ['department']),
+            ...mapState(['permissions']),
+            permissionDelete() {
+                return this.permissions.length ?
+                    (this.permissions.find((permission) => permission === 'delete')) :
+                    false;
+            },
+            permissionUpdate() {
+                return this.permissions.length ?
+                    (this.permissions.find((permission) => permission === 'update')) :
+                    false;
+            }
         },
         methods: {
             ...mapActions('department', ['getDepartment', 'deleteDepartment']),

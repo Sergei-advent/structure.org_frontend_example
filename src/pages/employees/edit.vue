@@ -6,18 +6,8 @@
                     v-model="valid"
                     lazy-validation
                     class="edit-form">
-                <v-text-field outlined v-model="form.name" :rules="rules.name" label="Department Name" required />
-                <v-text-field outlined v-model="form.code_name" label="Department Code Name for sync" required />
+                <v-text-field outlined v-model="form.name" :rules="rules.name" label="Employee Name" required />
                 <div>Description: </div>
-                <v-textarea outlined v-model="form.description" labale="Description"/>
-                <v-select
-                        outlined
-                        label="Parent department"
-                        :items="parentDepartmentList"
-                        item-text="name"
-                        item-value="id"
-                        v-model="form.parent_department_id"
-                        clearable/>
                 <div class="border px-5 pt-5 mb-5">
                     <div class="mb-3">Other Information: </div>
                     <div v-for="(value, key) in form.other_information" :key="key" class="flex row ml-0 mb-5 justify-space-between align-center pa-2 border">
@@ -31,20 +21,20 @@
                     </div>
                 </div>
                 <div class="border px-5 pt-5 mb-5">
-                    <div class="mb-3">Employees: </div>
-                    <div v-for="(employee, index) in form.employees" :key="index" class="flex row ml-0 mb-5 justify-space-between align-center pa-2 border">
-                        <div>{{ getEmployeeName(employee.id) }} {{ employee.position_id && '- ' + getPositionName(employee.position_id) }}</div>
-                        <v-btn @click="removeEmployee(index)">Remove</v-btn>
+                    <div class="mb-3">Departments: </div>
+                    <div v-for="(department, index) in form.departments" :key="index" class="flex row ml-0 mb-5 justify-space-between align-center pa-2 border">
+                        <div>{{ getDepartmentName(department.id) }} {{ department.position_id ? '- ' + getPositionName(department.position_id) : '' }}</div>
+                        <v-btn @click="removeDepartment(index)">Remove</v-btn>
                     </div>
                     <div class="flex row ml-0 align-center">
                         <v-select
                                 outlined
-                                label="Employee"
+                                label="Department"
                                 class="mr-5"
-                                :items="employeeList"
+                                :items="departmentList"
                                 item-text="name"
                                 item-value="id"
-                                v-model="newEmployeeObject.id"/>
+                                v-model="newDepartmentObject.id"/>
                         <v-select
                                 outlined
                                 label="Position"
@@ -52,8 +42,8 @@
                                 :items="positionList"
                                 item-text="name"
                                 item-value="id"
-                                v-model="newEmployeeObject.position_id"/>
-                        <v-btn class="mb-7" @click="addNewEmployee">Add</v-btn>
+                                v-model="newDepartmentObject.position_id"/>
+                        <v-btn class="mb-7" @click="addNewDepartment">Add</v-btn>
                     </div>
                 </div>
 
@@ -67,7 +57,7 @@
 </template>
 
 <script>
-    import {mapState, mapActions, mapGetters} from 'vuex'
+    import {mapState, mapActions} from 'vuex'
 
     export default {
         name: 'edit',
@@ -76,63 +66,57 @@
                 title: 'Create new',
                 valid: true,
                 otherInformationKey: {
-                  key: null,
-                  value: null
+                    key: null,
+                    value: null
                 },
-                newEmployeeObject: {
-                  id: null,
-                  position_id: null
+                newDepartmentObject: {
+                    id: null,
+                    position_id: null
                 },
                 form: {
                     name: '',
-                    description: '',
                     other_information: {},
-                    employees: [],
-                    parent_department_id: null,
-                    code_name: ''
+                    departments: []
                 },
                 rules: {
-                    name: [v => !!v || 'Department Name is required']
+                    name: [v => !!v || 'Employee Name is required']
                 }
             }
         },
         computed: {
-            ...mapState('employee', ['employeeList']),
+            ...mapState('employee', ['employee']),
             ...mapState('position', ['positionList']),
-            ...mapState('department', ['department', 'departmentList']),
-            ...mapGetters('department', ['departmentListWithoutCurrent']),
-            parentDepartmentList() {
-                return this.department ? this.departmentListWithoutCurrent(this.department.id) : this.departmentList
-            }
+            ...mapState('department', ['departmentList'])
         },
         methods: {
-            ...mapActions('employee', ['getEmployeesList']),
+            ...mapActions('employee', ['getEmployee', 'editEmployee']),
             ...mapActions('position', ['getPositionsList']),
-            ...mapActions('department', ['getDepartmentsList', 'getDepartment', 'editDepartment']),
+            ...mapActions('department', ['getDepartmentsList']),
             addOtherInformationKey() {
                 this.$set(this.form.other_information, this.otherInformationKey.key, this.otherInformationKey.value);
                 this.otherInformationKey.key = null;
                 this.otherInformationKey.value = null;
             },
-            addNewEmployee() {
-                const newObj = Object.assign({}, this.newEmployeeObject);
-                const exist = this.form.employees.find((employee) => employee.id === newObj.id && employee.position_id === newObj.position_id);
+            addNewDepartment() {
+                const newObj = Object.assign({}, this.newDepartmentObject);
+
+                const exist = this.form.departments.find((department) => department.id === newObj.id && department.position_id === newObj.position_id);
 
                 if (!exist) {
-                    this.form.employees.push(newObj);
+                    this.form.departments.push(newObj);
                 }
 
-                this.newEmployeeObject.id = null;
-                this.newEmployeeObject.position_id = null;
+                this.newDepartmentObject.id = null;
+                this.newDepartmentObject.position_id = null;
             },
-            getEmployeeName(id) {
-                return this.employeeList.find((employee) => employee.id === id).name;
+            getDepartmentName(id) {
+                return this.departmentList.find((department) => department.id === id).name;
             },
             getPositionName(id) {
                 return this.positionList.find((position) => position.id === id).name;
             },
-            removeEmployee(index) {
-                this.form.employees.splice(index, 1);
+            removeDepartment(index) {
+                this.form.departments.splice(index, 1);
             },
             removeOtherInformationKey(key) {
                 delete this.form.other_information[key];
@@ -141,35 +125,32 @@
             },
             sendForm() {
                 if (this.$refs.form.validate()) {
-                    this.editDepartment(this.form)
+                    this.editEmployee(this.form)
                         .then(() => {
                             if (this.$route.params.id) {
-                                this.$router.push({path: `/departments/${this.$route.params.id}`});
+                                this.$router.push({path: `/employees/${this.$route.params.id}`});
                             } else {
-                                this.$router.push({path: '/departments'});
+                                this.$router.push({path: '/employees'});
                             }
                         })
                 }
             },
             setParams() {
-                this.title = 'Edit department ' + this.department.name;
-                this.form.name = this.department.name;
-                this.form.id = this.department.id;
-                this.form.description = this.department.description;
-                this.form.code_name = this.department.code_name;
-                this.form.parent_department_id = this.department.parent_department_id;
-                this.form.other_information = Object.assign({}, this.department.other_information);
+                this.title = 'Edit employee ' + this.employee.name;
+                this.form.name = this.employee.name;
+                this.form.id = this.employee.id;
+                this.form.other_information = Object.assign({}, this.employee.other_information);
 
-                if (this.department.employees) {
-                    this.department.employees.forEach((employee) => {
+                if (this.employee.position) {
+                    this.employee.position.forEach((department) => {
                         let positionId = null;
 
-                        if (employee.position) {
-                            positionId = employee.position.id;
+                        if (department.position) {
+                            positionId = department.position.id;
                         }
 
-                        this.form.employees.push({
-                            id: employee.id,
+                        this.form.departments.push({
+                            id: department.department_id,
                             position_id: positionId
                         })
                     })
@@ -177,12 +158,11 @@
             }
         },
         mounted() {
-            this.getEmployeesList();
             this.getPositionsList();
             this.getDepartmentsList();
 
             if (this.$route.params.id) {
-                this.getDepartment(this.$route.params.id)
+                this.getEmployee(this.$route.params.id)
                     .then(() => {
                         this.setParams();
                     });
@@ -192,7 +172,7 @@
 </script>
 
 <style lang="scss">
-    .departments-page {
+    .employees-page {
         .edit-form {
             padding: 0 50px;
             max-height: 100%;

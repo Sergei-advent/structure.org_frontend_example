@@ -1,3 +1,5 @@
+import VueAxios from './vueAxios'
+
 import Vue from 'vue'
 import Vuex from 'vuex'
 
@@ -21,11 +23,24 @@ export default new Vuex.Store({
     },
     state: {
         showMainNav: true,
-        currentPage: 'Structure'
+        currentPage: 'Structure',
+        permissions: []
+    },
+    getters: {
+       permissionList(state) {
+           return state.permissions;
+       }
     },
     actions: {
         toggleMainNav({commit, state}) {
             commit('setShowMainNav', !state.showMainNav)
+        },
+        getPermission({commit}, page) {
+            return VueAxios.get('permissions?entity=' + page)
+                .then((response) => {
+                    commit('setPermissions', response.data);
+                    return Promise.resolve(response.data);
+                })
         }
     },
     mutations: {
@@ -34,7 +49,10 @@ export default new Vuex.Store({
         },
         setCurrentPage(state, payload) {
             state.currentPage = payload;
-        }
+        },
+        setPermissions(state, payload) {
+            state.permissions = payload;
+        },
     },
     strict: debug
 })

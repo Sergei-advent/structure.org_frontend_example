@@ -12,7 +12,7 @@
                         </v-list-item>
                     </v-list>
                 </template>
-                <template v-if="functionalGroup.employees">
+                <template v-if="functionalGroup.employees && functionalGroup.employees.length">
                     <div>Employees:</div>
                     <v-list dense>
                         <v-list-item
@@ -26,7 +26,8 @@
                 </template>
             </v-card-text>
             <v-card-actions>
-                <v-btn class="mx-auto" color="primary" link to="/functional_groups/edit">Edit</v-btn>
+                <v-btn class="mx-auto" v-if="permissionUpdate" color="primary" link :to="'/functional_groups/edit/' + functionalGroup.id">Edit</v-btn>
+                <v-btn class="mx-auto" v-if="permissionDelete" color="error" @click="removeFunctionalGroup">Delete</v-btn>
             </v-card-actions>
         </v-card>
     </div>
@@ -37,10 +38,25 @@
     export default {
         name: 'functionalGroup',
         computed: {
-            ...mapState('functionalGroup', ['functionalGroup'])
+            ...mapState('functionalGroup', ['functionalGroup']),
+            ...mapState(['permissions']),
+            permissionDelete() {
+                return this.permissions.length ?
+                    (this.permissions.find((permission) => permission === 'delete')) :
+                    false;
+            },
+            permissionUpdate() {
+                return this.permissions.length ?
+                    (this.permissions.find((permission) => permission === 'update')) :
+                    false;
+            }
         },
         methods: {
-            ...mapActions('functionalGroup', ['getFunctionalGroup'])
+            ...mapActions('functionalGroup', ['getFunctionalGroup', 'deleteFunctionalGroup']),
+            removeFunctionalGroup() {
+                this.deleteFunctionalGroup(this.$route.params.id)
+                    .then(() => this.$router.push({path: '/functional_groups'}));
+            }
         },
         mounted() {
             this.getFunctionalGroup(this.$route.params.id);

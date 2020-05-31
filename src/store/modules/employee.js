@@ -14,10 +14,30 @@ const actions = {
                 return commit('setEmployee', response.data)
             })
     },
-    getEmployeesList({commit}) {
-        return VueAxios.get('/employee')
+    getEmployeesList({commit}, search) {
+        return VueAxios.get('/employee', {params: {search}})
             .then((response) => {
                 return commit('setEmployeesList', response.data)
+            })
+    },
+    deleteEmployee({commit}, id) {
+        return VueAxios.delete('/employee/' + id)
+            .then(() => {
+                return commit('setEmployee', null)
+            })
+    },
+    editEmployee({commit}, employee) {
+        let request = 'post';
+        let url = 'employee';
+
+        if (employee.id ) {
+            request = 'patch';
+            url = 'employee/' + employee.id;
+        }
+
+        return VueAxios[request](url, employee)
+            .then((response) => {
+                return commit('setEmployee', response.data)
             })
     }
 };

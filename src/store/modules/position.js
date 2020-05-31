@@ -14,10 +14,30 @@ const actions = {
                 return commit('setPosition', response.data)
             })
     },
-    getPositionsList({commit}) {
-        return VueAxios.get('/position')
+    getPositionsList({commit}, search) {
+        return VueAxios.get('/position', {params: {search}})
             .then((response) => {
                 return commit('setPositionsList', response.data)
+            })
+    },
+    deletePosition({commit}, id) {
+        return VueAxios.delete('/position/' + id)
+            .then(() => {
+                return commit('setPosition', null)
+            })
+    },
+    editPosition({commit}, position) {
+        let request = 'post';
+        let url = 'position';
+
+        if (position.id ) {
+            request = 'patch';
+            url = 'position/' + position.id;
+        }
+
+        return VueAxios[request](url, position)
+            .then((response) => {
+                return commit('setPosition', response.data)
             })
     }
 };

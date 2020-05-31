@@ -5,15 +5,17 @@
 </template>
 
 <script>
-    import {mapMutations} from 'vuex'
+    import {mapMutations, mapActions} from 'vuex'
 
     export default {
         name: 'positions',
         methods: {
             ...mapMutations(['setCurrentPage']),
+            ...mapActions(['getPermission']),
         },
         mounted() {
             this.setCurrentPage('Positions');
+            this.getPermission('position');
         }
     }
 </script>

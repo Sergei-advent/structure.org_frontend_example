@@ -4,6 +4,7 @@
                 label="Upload structure from '.xml'"
                 @change="loadStructure"
                 accept=".xml"
+                v-if="permissionUpload"
         />
         <v-treeview
                 open-all
@@ -22,10 +23,17 @@
     export default {
         name: 'structure',
         computed: {
-          ...mapState('structure', ['structure'])
+          ...mapState('structure', ['structure']),
+            ...mapState(['permissions']),
+            permissionUpload() {
+                return this.permissions.length ?
+                    (this.permissions.find((permission) => permission === 'upload')) :
+                    false;
+            }
         },
         methods: {
             ...mapActions('structure', ['getStructure', 'setStructure']),
+            ...mapActions(['getPermission']),
             ...mapMutations(['setCurrentPage']),
             viewDepartment(id) {
               this.$router.push({path: `departments/${id}`});
@@ -43,6 +51,7 @@
         mounted() {
             this.getStructure();
             this.setCurrentPage('Structure');
+            this.getPermission('structure');
         }
     }
 </script>

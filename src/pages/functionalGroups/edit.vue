@@ -6,17 +6,16 @@
                     v-model="valid"
                     lazy-validation
                     class="edit-form">
-                <v-text-field outlined v-model="form.name" :rules="rules.name" label="Department Name" required />
-                <v-text-field outlined v-model="form.code_name" label="Department Code Name for sync" required />
+                <v-text-field outlined v-model="form.name" :rules="rules.name" label="Functional Group Name" required />
                 <div>Description: </div>
                 <v-textarea outlined v-model="form.description" labale="Description"/>
                 <v-select
                         outlined
-                        label="Parent department"
-                        :items="parentDepartmentList"
+                        label="Parent functional groups"
+                        :items="parentFunctionalGroupList"
                         item-text="name"
                         item-value="id"
-                        v-model="form.parent_department_id"
+                        v-model="form.parent_functional_group_id"
                         clearable/>
                 <div class="border px-5 pt-5 mb-5">
                     <div class="mb-3">Other Information: </div>
@@ -76,39 +75,38 @@
                 title: 'Create new',
                 valid: true,
                 otherInformationKey: {
-                  key: null,
-                  value: null
+                    key: null,
+                    value: null
                 },
                 newEmployeeObject: {
-                  id: null,
-                  position_id: null
+                    id: null,
+                    position_id: null
                 },
                 form: {
                     name: '',
                     description: '',
                     other_information: {},
                     employees: [],
-                    parent_department_id: null,
-                    code_name: ''
+                    parent_functional_group_id: null
                 },
                 rules: {
-                    name: [v => !!v || 'Department Name is required']
+                    name: [v => !!v || 'Functional Group Name is required']
                 }
             }
         },
         computed: {
             ...mapState('employee', ['employeeList']),
             ...mapState('position', ['positionList']),
-            ...mapState('department', ['department', 'departmentList']),
-            ...mapGetters('department', ['departmentListWithoutCurrent']),
-            parentDepartmentList() {
-                return this.department ? this.departmentListWithoutCurrent(this.department.id) : this.departmentList
+            ...mapState('functionalGroup', ['functionalGroup', 'functionalGroupList']),
+            ...mapGetters('functionalGroup', ['functionalGroupsListWithoutCurrent']),
+            parentFunctionalGroupList() {
+                return this.functionalGroup ? this.functionalGroupsListWithoutCurrent(this.functionalGroup.id) : this.functionalGroupList
             }
         },
         methods: {
             ...mapActions('employee', ['getEmployeesList']),
             ...mapActions('position', ['getPositionsList']),
-            ...mapActions('department', ['getDepartmentsList', 'getDepartment', 'editDepartment']),
+            ...mapActions('functionalGroup', ['getFunctionalGroupsList', 'getFunctionalGroup', 'editFunctionalGroup']),
             addOtherInformationKey() {
                 this.$set(this.form.other_information, this.otherInformationKey.key, this.otherInformationKey.value);
                 this.otherInformationKey.key = null;
@@ -141,27 +139,26 @@
             },
             sendForm() {
                 if (this.$refs.form.validate()) {
-                    this.editDepartment(this.form)
+                    this.editFunctionalGroup(this.form)
                         .then(() => {
                             if (this.$route.params.id) {
-                                this.$router.push({path: `/departments/${this.$route.params.id}`});
+                                this.$router.push({path: `/functional_groups/${this.$route.params.id}`});
                             } else {
-                                this.$router.push({path: '/departments'});
+                                this.$router.push({path: '/functional_groups'});
                             }
                         })
                 }
             },
             setParams() {
-                this.title = 'Edit department ' + this.department.name;
-                this.form.name = this.department.name;
-                this.form.id = this.department.id;
-                this.form.description = this.department.description;
-                this.form.code_name = this.department.code_name;
-                this.form.parent_department_id = this.department.parent_department_id;
-                this.form.other_information = Object.assign({}, this.department.other_information);
+                this.title = 'Edit functional group ' + this.functionalGroup.name;
+                this.form.name = this.functionalGroup.name;
+                this.form.id = this.functionalGroup.id;
+                this.form.description = this.functionalGroup.description;
+                this.form.parent_functional_group_id = this.functionalGroup.parent_functional_group_id;
+                this.form.other_information = Object.assign({}, this.functionalGroup.other_information);
 
-                if (this.department.employees) {
-                    this.department.employees.forEach((employee) => {
+                if (this.functionalGroup.employees) {
+                    this.functionalGroup.employees.forEach((employee) => {
                         let positionId = null;
 
                         if (employee.position) {
@@ -179,10 +176,10 @@
         mounted() {
             this.getEmployeesList();
             this.getPositionsList();
-            this.getDepartmentsList();
+            this.getFunctionalGroupsList();
 
             if (this.$route.params.id) {
-                this.getDepartment(this.$route.params.id)
+                this.getFunctionalGroup(this.$route.params.id)
                     .then(() => {
                         this.setParams();
                     });
@@ -192,7 +189,7 @@
 </script>
 
 <style lang="scss">
-    .departments-page {
+    .functional-group-page {
         .edit-form {
             padding: 0 50px;
             max-height: 100%;
