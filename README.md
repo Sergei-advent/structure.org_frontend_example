@@ -1,5 +1,7 @@
 # structure.org_frontend_example
 
+Example using API https://github.com/Sergei-advent/structure.org on Vue.js 
+
 ## Project setup
 ```
 npm install
