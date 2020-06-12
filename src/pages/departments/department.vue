@@ -20,7 +20,7 @@
                                 :key="key"
                                 :to="'/employees/' + employee.id"
                                 link>
-                            {{ employee.name }} {{ employee.position && '- ' + employee.position.name }}
+                            {{ employee.name }} {{ employee.position && employee.position.name && '- ' + employee.position.name }}
                         </v-list-item>
                     </v-list>
                 </template>
